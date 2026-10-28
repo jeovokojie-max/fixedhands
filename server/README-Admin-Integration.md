@@ -12,6 +12,8 @@ The `Fixhands.vbproj` Web Forms site now serves the Fixhands web app from `index
 
 The checked-in `FixhandsAllowedOrigins` setting permits the Android WebView origin. Add any other exact front-end origins as a semicolon-separated list; avoid wildcard origins.
 
+`Web.config` currently sets `<customErrors mode="Off" />` to expose ASP.NET error details while diagnosing the IIS deployment. This can reveal stack traces to remote visitors. Change it to `RemoteOnly` or `On` before exposing the site publicly; the Admin API itself returns sanitized SQL diagnostics.
+
 For the Android WebView build, set `window.FIXHANDS_API_BASE_URL` in the main project's `api-config.js` to the deployed HTTPS URL of this VB.NET IIS application (include its virtual application path if it is not hosted at the site root), then run `android\sync-web-assets.ps1` and rebuild the app. The Android WebView origin cannot infer your IIS address.
 
 The handler recognizes the ASP.NET Identity V3 PBKDF2 hash format used by the earlier VB/C# API. At the first successful login for a legacy plaintext account, it writes `PasswordHash` and replaces `Password` with `!`. The login API accepts only accounts with `IsAdmin = 1`. Sessions are held in memory for eight hours and reset when the app pool restarts.
