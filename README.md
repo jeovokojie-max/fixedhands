@@ -1,33 +1,34 @@
-# FixHands
+# Fixhands
 
-FixHands is a mobile-first home-services project that connects customers with local repair professionals and helps providers receive service requests.
+Fixhands is a mobile-first home-services app for finding local professionals and requesting repairs, installations, and maintenance.
 
 ## Project components
 
-- **Web app** - customer service discovery and request flow at the repository root.
-- **ASP.NET Web Forms API** - server-side registration and service request endpoints in `server/`.
-- **Android app** - a WebView wrapper and bundled web assets in `android/`.
+- Web app at the repository root.
+- Android Studio WebView app in `android/`.
+- ASP.NET Web Forms backend in `server/`, written in VB.NET.
 
-FixHands is an early-stage prototype. Example professionals and planning figures are not evidence of live customers, completed jobs, or revenue.
+The directory includes sample professionals. When deployed, professional registration and customer service requests can use the SQL-backed endpoints in the VB.NET site. Quotes, approvals, and receipts are currently stored on the local device.
 
 ## Run the web prototype
 
-Serve the repository root over HTTP, then open the local URL in a browser. The app uses `api-config.js` to derive the API base from the current origin. To use live requests, deploy the ASP.NET API and configure the web app to use its HTTPS origin.
+Serve the repository root over HTTP and open it in a browser. The app uses `api-config.js` to locate the API on the same IIS application. For Android, set the API URL to the deployed HTTPS IIS application because the Android WebView origin cannot infer the server address.
 
-## Configure the ASP.NET API
+## Configure the VB.NET site
 
-1. Open `server/` in Visual Studio with the .NET Framework 4.7.2 developer tools.
-2. Restore the NuGet packages listed in `server/packages.config`.
-3. Copy `server/Web.config.example` to `server/Web.config`.
-4. Set the `Fixhands` SQL connection string in the local `Web.config` or secure IIS configuration. Do not commit the real connection string.
-5. Apply the required database scripts in `server/` to the intended development database.
+1. Open `server/Fixhands.slnx` or `server/Fixhands.vbproj` in Visual Studio with the .NET Framework 4.7.2 web development tools.
+2. Restore the packages listed in `server/packages.config`.
+3. Copy `server/Web.config.example` to `server/Web.config` for local development. The real `Web.config` is excluded from Git.
+4. Configure `FIXHANDS_SQL_CONNECTION` for the IIS worker process or set the `Fixhands` connection string in protected server configuration. Never commit real SQL credentials.
+5. Back up the `fixhands` database, then apply the required SQL scripts in `server/` as described in `server/README-Admin-Integration.md`. Promote only the intended admin account.
+6. Deploy the site over HTTPS. Recycle its IIS app pool after changing the connection configuration.
 
-`Web.config` is ignored by Git. `Web.config.example` contains only a placeholder.
+The API supports professional registration and browsing, service requests, private customer-to-professional assignment, and Admin sign-in. Admin access requires `IsAdmin = 1`; legacy plaintext admin passwords are hashed after their first successful login. The dashboard's records and the quote/receipt workflow still use local device storage.
 
 ## Build the Android app
 
-Open `android/` in Android Studio with a compatible Android SDK installed. Android Studio generates `local.properties` for the local machine; that file is excluded from version control. Configure the backend HTTPS URL before using live API features.
+Open `android/` in Android Studio with a compatible SDK. Set `window.FIXHANDS_API_BASE_URL` in the root `api-config.js` to the deployed HTTPS IIS URL, run `android/sync-web-assets.ps1`, and build the app. Do not put SQL credentials in the Android project.
 
 ## Security
 
-Never commit database passwords, signing keys, access tokens, or private customer data. Keep deployment secrets in protected environment-specific configuration.
+Never commit SQL passwords, signing keys, access tokens, or private customer data. The `.gitignore` excludes server configuration, generated build output, local IDE files, packages, and planning documents.
