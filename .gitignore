@@ -1,0 +1,23 @@
+# Build output and local IDE files
+**/bin/
+**/obj/
+**/packages/
+**/.vs/
+**/.idea/
+**/App_Data/
+**/node_modules/
+**/.gradle/
+**/build/
+android/local.properties
+**/*.user
+**/*.suo
+server/Web.config
+
+# Local planning artifacts and bundles
+*.docx
+*.pdf
+*.xlsx
+*.zip
+.pitch_build/
+outputs/
+rendered_plan/
